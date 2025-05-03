@@ -34,44 +34,46 @@ export const NewCommentForm: React.FC<Props> = ({
     setCommentTextValue('');
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     resetErrors();
 
+    let hasError = false;
+
     if (!authorNameValue) {
       setAuthorNameError(true);
+      hasError = true;
     }
 
     if (!authorEmailValue) {
       setAuthorEmailError(true);
+      hasError = true;
     }
 
     if (!commentTextValue) {
       setCommentTextError(true);
+      hasError = true;
     }
 
-    if (!commentTextValue || !authorEmailValue || !commentTextValue) {
+    if (hasError) {
       return;
     }
 
     setIsLoading(true);
-    async function createComment(comment: CommentData) {
-      const newComment = await addComment(comment);
 
-      addCommentToList(newComment);
-    }
+    const newComment: CommentData = {
+      postId,
+      name: authorNameValue,
+      email: authorEmailValue,
+      body: commentTextValue,
+    };
 
     try {
-      const newComment: CommentData = {
-        postId,
-        name: authorNameValue,
-        email: authorEmailValue,
-        body: commentTextValue,
-      };
+      const createdComment = await addComment(newComment);
 
-      createComment(newComment);
+      addCommentToList(createdComment);
       setCommentTextValue('');
-    } catch {
+    } catch (error) {
     } finally {
       setIsLoading(false);
     }
