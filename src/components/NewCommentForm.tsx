@@ -16,15 +16,15 @@ export const NewCommentForm: React.FC<Props> = ({
   const [authorNameValue, setAuthorNameValue] = useState('');
   const [authorEmailValue, setAuthorEmailValue] = useState('');
   const [commentTextValue, setCommentTextValue] = useState('');
-  const [authorNameError, setAuthorNameError] = useState('');
-  const [authorEmailError, setAuthorEmailError] = useState('');
-  const [commentTextError, setCommentTextError] = useState('');
+  const [authorNameError, setAuthorNameError] = useState(false);
+  const [authorEmailError, setAuthorEmailError] = useState(false);
+  const [commentTextError, setCommentTextError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const resetErrors = () => {
-    setAuthorEmailError('');
-    setAuthorNameError('');
-    setCommentTextError('');
+    setAuthorEmailError(false);
+    setAuthorNameError(false);
+    setCommentTextError(false);
   };
 
   const handleReset = () => {
@@ -37,6 +37,23 @@ export const NewCommentForm: React.FC<Props> = ({
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     resetErrors();
+
+    if (!authorNameValue) {
+      setAuthorNameError(true);
+    }
+
+    if (!authorEmailValue) {
+      setAuthorEmailError(true);
+    }
+
+    if (!commentTextValue) {
+      setCommentTextError(true);
+    }
+
+    if (!commentTextValue || !authorEmailValue || !commentTextValue) {
+      return;
+    }
+
     setIsLoading(true);
     async function createComment(comment: CommentData) {
       const newComment = await addComment(comment);
@@ -80,7 +97,7 @@ export const NewCommentForm: React.FC<Props> = ({
             className={classNames('input', { 'is-danger': authorNameError })}
             value={authorNameValue}
             onChange={event => setAuthorNameValue(event.target.value)}
-            onBlur={() => setAuthorNameError('')}
+            onBlur={() => setAuthorNameError(false)}
           />
 
           <span className="icon is-small is-left">
@@ -118,7 +135,7 @@ export const NewCommentForm: React.FC<Props> = ({
             className={classNames('input', { 'is-danger': authorEmailError })}
             value={authorEmailValue}
             onChange={event => setAuthorEmailValue(event.target.value)}
-            onBlur={() => setAuthorEmailError('')}
+            onBlur={() => setAuthorEmailError(false)}
           />
 
           <span className="icon is-small is-left">
@@ -157,7 +174,7 @@ export const NewCommentForm: React.FC<Props> = ({
             })}
             value={commentTextValue}
             onChange={event => setCommentTextValue(event.target.value)}
-            onBlur={() => setCommentTextError('')}
+            onBlur={() => setCommentTextError(false)}
           />
         </div>
 

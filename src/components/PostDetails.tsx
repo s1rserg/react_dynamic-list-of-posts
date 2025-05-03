@@ -32,17 +32,19 @@ export const PostDetails: React.FC<Props> = ({ post }) => {
   }, [post.id]);
 
   const handleDeleteComment = (commentId: number) => {
+    const previousComments = comments;
+
     setComments(prev => prev.filter(comment => comment.id !== commentId));
 
     async function removeComment() {
-      await deleteComment(commentId);
+      try {
+        await deleteComment(commentId);
+      } catch {
+        setComments(previousComments);
+      }
     }
 
-    try {
-      removeComment();
-    } catch {
-      setComments(comments);
-    }
+    removeComment();
   };
 
   return (
